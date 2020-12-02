@@ -42,8 +42,6 @@ One can also use
 ```
 to see all the files in their current directory.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
 # Step 2
 Run the Main.java file using
 ```
