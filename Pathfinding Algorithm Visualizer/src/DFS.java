@@ -4,25 +4,24 @@ import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-public class BFS{
+public class DFS {
 
-	ArrayList<Integer> q;
+	ArrayList<Integer> st;
 	Grid mGrid;
 	HashMap<Integer, ArrayList<Integer>> adjLists = new HashMap<Integer, ArrayList<Integer>>();
 	
 	HashMap<Integer, Integer> parent = new HashMap<Integer, Integer>();
 	HashMap<Integer, Boolean> visited = new HashMap<Integer, Boolean>();
 	public boolean found;
-	public BFS(Grid grid) {
+	public DFS(Grid grid) {
 		
-		q = new ArrayList<Integer>();
+		st = new ArrayList<Integer>();
 		mGrid = grid;
-		
+		GenerateAdjLists();
 	}
 	public void Start()
 	{
-		GenerateAdjLists();
-		q.add(mGrid.startY * mGrid.gridSize + mGrid.startX);
+		st.add(mGrid.startY * mGrid.gridSize + mGrid.startX);
 		mGrid.SetState(mGrid.startX, mGrid.startY, 1);
 		found = false;
 		
@@ -43,7 +42,7 @@ public class BFS{
 	}
 	public void Step() {
 		// TODO Auto-generated method stub
-		int c = q.get(0);
+		int c = st.remove(st.size() - 1);
 		int x = GetX(c);
 		int y = GetY(c);
 		
@@ -56,9 +55,9 @@ public class BFS{
 		ArrayList<Integer> candidates = adjLists.get(c);
 		for (Integer to : candidates)
 		{
-			if (!visited.containsKey(to) && !q.contains(to))
+			if (!visited.containsKey(to) && !st.contains(to))
 			{
-				q.add(to);
+				st.add(to);
 				int toX = GetX(to);
 				int toY = GetY(to);
 				mGrid.SetState(toX, toY, 1);
@@ -71,7 +70,6 @@ public class BFS{
 			}
 		}
 		visited.put(c, true);
-		q.remove(0);
 		mGrid.SetState(x, y, 2);
 	}
 	public void Retrace()
@@ -87,6 +85,7 @@ public class BFS{
 		Collections.reverse(path);
 		int x;
 		int y;
+		
 		if (path.size() != 1)
 		{
 			for (Integer n : path)
@@ -109,7 +108,7 @@ public class BFS{
 				{
 					for (int l = -1; l < 2; l++)
 					{
-						if (((k == 0 && l != 0) || (k != 0 && l == 0)) && InBounds(k+i, l+j) && mGrid.GetState(j+l, i+k) != 4)
+						if (((k == 0 && l != 0) || (k != 0 && l == 0)) && InBounds(k+i, l+j) && mGrid.GetState(i+k, j+l) != 4)
 						{
 							int to = (i+k) * mGrid.gridSize + j + l;
 							adj.add(to);
@@ -119,14 +118,6 @@ public class BFS{
 				adjLists.put(fr, adj);
 			}
 		}
-	}
-	public void CleanSearch()
-	{
-		found = false;
-		adjLists.clear();
-		parent.clear();
-		visited.clear();
-		q.clear();
 	}
 	private int GetX(int c)
 	{
@@ -141,3 +132,4 @@ public class BFS{
 		return (x >= 0 && y >= 0 && x < mGrid.gridSize && y < mGrid.gridSize);
 	}
 }
+

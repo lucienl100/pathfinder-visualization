@@ -1,28 +1,48 @@
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-public class BFS{
-
-	ArrayList<Integer> q;
+import java.util.*;
+import java.lang.Math;
+public class AStar{
+	
+	int i = 0;
 	Grid mGrid;
 	HashMap<Integer, ArrayList<Integer>> adjLists = new HashMap<Integer, ArrayList<Integer>>();
 	
 	HashMap<Integer, Integer> parent = new HashMap<Integer, Integer>();
 	HashMap<Integer, Boolean> visited = new HashMap<Integer, Boolean>();
+	HashMap<Integer, AStarNode> map = new HashMap<Integer, AStarNode>();
+	
+	ArrayList<Integer> inQueue = new ArrayList<Integer>();
+	PriorityQueue<AStarNode> pQueue = new PriorityQueue<>(new Comparator<AStarNode>() {
+	    @Override
+	    public int compare(AStarNode o1, AStarNode o2) {
+	    	if (o1.fScore < o2.fScore)
+	    	{
+	    		return -1;
+	    	}
+	    	else if (o1.fScore > o2.fScore)
+	    	{
+	    		return 1;
+	    	}
+	    	return 0;
+	    }
+	});
+	
 	public boolean found;
-	public BFS(Grid grid) {
-		
-		q = new ArrayList<Integer>();
+	public AStar(Grid grid) {
 		mGrid = grid;
-		
+	}
+	public double DistanceHeuristic(int x, int y)
+	{
+		return 2*Math.sqrt(Math.pow(mGrid.endX - x, 2) + Math.pow(mGrid.endY - y, 2));
 	}
 	public void Start()
 	{
 		GenerateAdjLists();
-		q.add(mGrid.startY * mGrid.gridSize + mGrid.startX);
+		AStarNode node = new AStarNode(mGrid.startY * mGrid.gridSize + mGrid.startX);
+		node.SetGScore(0);
+		node.SetFScore(DistanceHeuristic(mGrid.startX, mGrid.startY));
+		pQueue.add(node);
+		
 		mGrid.SetState(mGrid.startX, mGrid.startY, 1);
 		found = false;
 		
@@ -43,26 +63,62 @@ public class BFS{
 	}
 	public void Step() {
 		// TODO Auto-generated method stub
-		int c = q.get(0);
-		int x = GetX(c);
-		int y = GetY(c);
-		
+		AStarNode c = pQueue.remove();
+		map.put(c.id, c);
+		visited.put(c.id, true);
+		int x = GetX(c.id);
+		int y = GetY(c.id);
+		i++;
 		if (x == mGrid.endX && y == mGrid.endY)
 		{
 			found = true;
 			return;
 		}
-		
-		ArrayList<Integer> candidates = adjLists.get(c);
+		ArrayList<Integer> candidates = adjLists.get(c.id);
 		for (Integer to : candidates)
 		{
-			if (!visited.containsKey(to) && !q.contains(to))
+			int toX = GetX(to);
+			int toY = GetY(to);
+			
+			
+			if (!visited.containsKey(to))
 			{
-				q.add(to);
-				int toX = GetX(to);
-				int toY = GetY(to);
-				mGrid.SetState(toX, toY, 1);
-				parent.put(to, c);
+				System.out.println(to);
+				double newGScore = c.gScore + 1;
+				
+				AStarNode node;
+				if (map.containsKey(to))
+				{
+					node = map.get(to);
+					if (newGScore < node.gScore)
+					{
+						node.SetGScore(newGScore);
+						node.SetFScore(newGScore + DistanceHeuristic(toX, toY));
+						parent.put(to, c.id);
+						if (!inQueue.contains(to))
+						{
+							inQueue.add(to);
+							pQueue.add(node);
+							parent.put(to, c.id);
+							mGrid.SetState(toX, toY, 1);
+						}
+					}
+				}
+				else
+				{
+					node = new AStarNode(to);
+					node.SetGScore(newGScore);
+					node.SetFScore(newGScore + DistanceHeuristic(toX, toY));
+					map.put(to, node);
+					parent.put(to, c.id);
+					if (!inQueue.contains(to))
+					{
+						inQueue.add(to);
+						pQueue.add(node);
+						parent.put(to, c.id);
+						mGrid.SetState(toX, toY, 1);
+					}
+				}
 				if (toX == mGrid.endX && toY == mGrid.endY)
 				{
 					found = true;
@@ -70,12 +126,11 @@ public class BFS{
 				}
 			}
 		}
-		visited.put(c, true);
-		q.remove(0);
 		mGrid.SetState(x, y, 2);
 	}
 	public void Retrace()
 	{
+		
 		ArrayList<Integer> path = new ArrayList<Integer>();
 		int node = mGrid.endY * mGrid.gridSize + mGrid.endX;
 		path.add(node);
@@ -87,6 +142,7 @@ public class BFS{
 		Collections.reverse(path);
 		int x;
 		int y;
+		System.out.println(path);
 		if (path.size() != 1)
 		{
 			for (Integer n : path)
@@ -120,24 +176,18 @@ public class BFS{
 			}
 		}
 	}
-	public void CleanSearch()
-	{
-		found = false;
-		adjLists.clear();
-		parent.clear();
-		visited.clear();
-		q.clear();
-	}
+	
 	private int GetX(int c)
 	{
 		return c % mGrid.gridSize;
 	}
 	private int GetY(int c)
 	{
-		return c/mGrid.gridSize;
+		return c / mGrid.gridSize;
 	}
 	private boolean InBounds(int x, int y)
 	{
 		return (x >= 0 && y >= 0 && x < mGrid.gridSize && y < mGrid.gridSize);
 	}
 }
+
