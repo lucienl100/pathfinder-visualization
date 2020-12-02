@@ -28,7 +28,7 @@ https://www.oracle.com/au/java/technologies/javase-jre8-downloads.html
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-# Step 1
+### Step 1
 Download the repository and open up the terminal to navigate to the folder.
 One can use the
 ```
@@ -42,7 +42,7 @@ One can also use
 ```
 to see all the files in their current directory.
 
-# Step 2
+### Step 2
 Run the Main.java file using
 ```
       javac Main.java
