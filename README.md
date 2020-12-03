@@ -1,5 +1,6 @@
 # Pathfinding Visualizer
-A* in action
+<i>A* in action</i>
+
 ![](a-star.gif)
 
 ## About The Project
