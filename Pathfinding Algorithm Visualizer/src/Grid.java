@@ -85,7 +85,7 @@ public class Grid extends JPanel {
 			}
 		}
 	}
-	private boolean InBounds(int x, int y)
+	public boolean InBounds(int x, int y)
 	{
 		return (x >= 0 && y >= 0 && x < gridSize && y < gridSize);
 	}
@@ -97,5 +97,13 @@ public class Grid extends JPanel {
 		{
 			SetState(adjustedX, adjustedY, 4);
 		}
+	}
+	public int GetX(int c)
+	{
+		return c % gridSize;
+	}
+	public int GetY(int c)
+	{
+		return c / gridSize;
 	}
 }

@@ -4,8 +4,8 @@ import java.lang.Math;
 public class AStar{
 	
 	int i = 0;
-	Grid mGrid;
-	HashMap<Integer, ArrayList<Integer>> adjLists = new HashMap<Integer, ArrayList<Integer>>();
+	
+	
 	
 	HashMap<Integer, Integer> parent = new HashMap<Integer, Integer>();
 	HashMap<Integer, Boolean> visited = new HashMap<Integer, Boolean>();
@@ -127,31 +127,6 @@ public class AStar{
 			}
 		}
 		mGrid.SetState(x, y, 2);
-	}
-	public void Retrace()
-	{
-		
-		ArrayList<Integer> path = new ArrayList<Integer>();
-		int node = mGrid.endY * mGrid.gridSize + mGrid.endX;
-		path.add(node);
-		while (parent.containsKey(node))
-		{
-			path.add(parent.get(node));
-			node = parent.get(node);
-		}
-		Collections.reverse(path);
-		int x;
-		int y;
-		System.out.println(path);
-		if (path.size() != 1)
-		{
-			for (Integer n : path)
-			{
-				x = GetX(n);
-				y = GetY(n);
-				mGrid.grid[x][y] = 3;
-			}
-		}
 	}
 	public void GenerateAdjLists()
 	{

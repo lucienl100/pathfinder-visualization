@@ -19,7 +19,7 @@ public class Main {
 		startB.setBounds(100, 120, 140, 80);
 		f.setLayout(null);
 		f.add(startB);
-		AStar bfs = new AStar(grid);
+		BFS bfs = new BFS(grid);
 		
         startB.addActionListener(new ActionListener() {
             
@@ -31,6 +31,7 @@ public class Main {
                     public Void doInBackground() {
                         startB.setText("Working");
                         grid.ClearGrid();
+                        bfs.ClearData();
                         bfs.Start();
                         return null;
                     }
