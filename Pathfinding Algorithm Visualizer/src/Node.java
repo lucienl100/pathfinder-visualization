@@ -1,6 +1,6 @@
 
 public class Node {
-	int MAX_GRID_SIZE = 100; //Change this into a static variable in grid;
+	int MAX_GRID_SIZE = 100; //Need to change this into a static variable in grid;
 	private int x;
 	private int y;
 	public Node(int x, int y)
